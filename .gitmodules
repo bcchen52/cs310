@@ -1,0 +1,3 @@
+[submodule "coding_projects/coding_project1"]
+	path = coding_projects/coding_project1
+	url = git@github.com:Binghamton-University-CS/cs310-fall2024-cp1-bcchen52.git
