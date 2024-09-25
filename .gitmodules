@@ -1,6 +1,0 @@
-[submodule "coding_projects/coding_project1"]
-	path = coding_projects/coding_project1
-	url = git@github.com:Binghamton-University-CS/cs310-fall2024-cp1-bcchen52.git
-[submodule "coding_projects/coding_project2/coding_project2"]
-	path = coding_projects/coding_project2/coding_project2
-	url = git@github.com:Binghamton-University-CS/cs310-fall2024-cp2-bcchen52.git
