@@ -4,3 +4,6 @@
 [submodule "coding_projects/coding_project1/cs310-fall2024-cp1-bcchen52"]
 	path = coding_projects/coding_project1/cs310-fall2024-cp1-bcchen52
 	url = git@github.com:Binghamton-University-CS/cs310-fall2024-cp1-bcchen52.git
+[submodule "coding_projects/coding_project3/cs310-fall2024-cp3-bcchen52"]
+	path = coding_projects/coding_project3/cs310-fall2024-cp3-bcchen52
+	url = git@github.com:Binghamton-University-CS/cs310-fall2024-cp3-bcchen52.git
