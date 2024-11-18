@@ -61,8 +61,7 @@ bool Voter::get_voted(){
 
 bool Voter::operator==(const Voter& other) const {
 	return (first == other.first) && 
-        (last == other.last) && 
-        (age == other.age); 
+        (last == other.last); 
 }
 
 bool Voter::operator!=(const Voter& other) const {
@@ -70,23 +69,23 @@ bool Voter::operator!=(const Voter& other) const {
 }
 
 bool Voter::operator<(const Voter& other) const {
-	if(age != other.age){
-		return age < other.age;
+	if(first != other.first){
+		return first < other.first;
 	} else {
-		if(first != other.first){
-			return first < other.first;
-		} else {
-			if(last != other.last){
-				return last < other.last;
-			}
-		}
-	}
-	return false;
+		return last < other.last;
+	} 
 }
 
 bool Voter::impactCompare(const Voter& other)  {
 	if(likelihood * strength != other.likelihood*other.strength){
 		return likelihood * strength < other.likelihood*other.strength;
+	} 
+	return *this < other;
+}
+
+bool Voter::ageCompare(const Voter& other) {
+	if(age != other.age){
+		return age < other.age;
 	} 
 	return *this < other;
 }

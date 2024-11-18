@@ -20,15 +20,15 @@ class RegisterVoter {
         RegisterVoter();
         bool voter(string first, string last, int age); //return if sucessfully added
         void voted(string first, string last, int age);
-        void reduce_likelihood(string first, string last, int age, double change);
-        void support(string first, string last, int age, double change);
+        void reduce_likelihood(string first, string last, double change);
+        void support(string first, string last, double change);
         void chauffeur();
         void show_impact();
         bool swap_down(int current_index, int max);
-        bool swap_up(int current_index, int max);
+        bool swap_up(int current_index);
         void percolate_down(Voter* curr, int max);
-        void percolate_up(Voter* curr, int max);
-        Voter* bst_search(Voter* v);
+        void percolate_up(Voter* curr);
+        Voter* bst_search(string first, string last);
 };
 
 #endif

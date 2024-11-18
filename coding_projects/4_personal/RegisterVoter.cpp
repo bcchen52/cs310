@@ -5,26 +5,39 @@ RegisterVoter::RegisterVoter(){
 }
 
 bool RegisterVoter::voter(string first, string last, int age){
+
     //Add to BST, check if it exists
     Voter* v = new Voter(first, last, age);
     Voter* curr = root;
 
+    if(age<18 || age>118){
+        cout << "Voter ";
+        v->show();
+        cout << ", does not meet age requirements." << endl;
+        delete v;
+        return false;
+    }
+
     //add to each thing and reorganize
-    if(root == nullptr){
+    if(curr == nullptr){
         root = v;
         ivector.push_back(v);
         avector.push_back(v);
+        cout << "New voter ";
+        v->show();
+        cout << ", added." << endl;
         return true;
     } else { // check if we need to 
         //search + insert BST
         while(curr != nullptr){
-            if(curr == v){
+            if(*curr == *v){
                 cout << "Voter ";
                 curr->show();
-                cout << ", already exists.";
+                cout << ", already exists." << endl;
+                delete v;
                 return false;
             }
-            else if(v<curr){
+            else if(*v<*curr){
                 if(curr->prev == nullptr){
                     curr->prev = v;
                     curr = nullptr;
@@ -49,15 +62,15 @@ bool RegisterVoter::voter(string first, string last, int age){
 
     //insert into age
     bool inserted = false;
-    for(int i = 0; i<avector.size();i++){
-        if(curr<ivector[i]){
+    for(long unsigned int i = 0; i<avector.size();i++){
+        if(v->ageCompare(*(avector[i]))){
             if(i == 0){
-                avector.insert(avector.begin() + i, curr);
+                avector.insert(avector.begin() + i, v);
                 inserted = true;
                 break;
             } else {
-                if(!(curr<ivector[i-1])){
-                    avector.insert(avector.begin() + i, curr);
+                if(avector[i-1]->ageCompare(*v)){
+                    avector.insert(avector.begin() + i, v);
                     inserted = true;
                     break;
                 }
@@ -66,74 +79,85 @@ bool RegisterVoter::voter(string first, string last, int age){
     }
 
     if(!inserted){
-        avector.push_back(curr);
+        avector.push_back(v);
     }
 
     //insert into impact vector
-    ivector.push_back(curr);
-    percolate_down(curr, ivector.size());
+    v->set_position(ivector.size());
+    ivector.push_back(v);
+    percolate_up(v);
 
     //good message
     cout << "New voter ";
-    curr->show();
-    cout << ", added.";
+    v->show();
+    cout << ", added." << endl;
     return true;
 };
 
 void RegisterVoter::voted(string first, string last, int age){
     //voted
-    Voter* v = new Voter(first, last, age);
 
-    Voter* curr = bst_search(v);
+    Voter* curr = bst_search(first, last);
 
-    delete v;
+    if(curr != nullptr){
+        if(curr->get_voted()){
+            cout << "Voter ";
+            curr->show();
+            cout << " has already voted." << endl;
+        } else {
+            curr->vote();
+            cout << "Voter ";
+            curr->show();
+            cout << " voted." << endl;
+        }   
+    } else {
+        cout << first << " " << last << ", age " << age << " does not exist." << endl;
+    }
 
-    curr->vote();
-
-    cout << "Voter ";
-    curr->show();
-    cout << " voted.";
 };
 
-void RegisterVoter::reduce_likelihood(string first, string last, int age, double change){
+void RegisterVoter::reduce_likelihood(string first, string last, double change){
     //reducing likelihood decreases impact, percolte down
-    Voter* v = new Voter(first, last, age);
+    Voter* curr = bst_search(first, last);
 
-    Voter* curr = bst_search(v);
-
-    delete v;
-
-    if(!(curr->get_voted())){
-        curr->updateLikelihood(change);
-        percolate_down(curr, ivector.size());
-        //print message
-        cout << "reduced" << endl;
+    if(curr != nullptr){
+        if(!(curr->get_voted())){
+            curr->updateLikelihood(change);
+            percolate_down(curr, ivector.size());
+            //print message
+            cout << "Voting liklihood of ";
+            curr->name();
+            cout << " decreased by " << change << "%" << endl;
+        } else {
+            //print message that it alr happened
+            curr->name();
+            cout << "alread voted." << endl;
+        }
     } else {
-        //print message that it alr happened
-        cout << "alr voted" << endl;
+        cout << first << " " << last << " does not exist.";
     }
 };
 
-void RegisterVoter::support(string first, string last, int age, double change){
+void RegisterVoter::support(string first, string last, double change){
     //increase support increases likelhood, perolate up
-    Voter* v = new Voter(first, last, age);
+    Voter* curr = bst_search(first, last);
 
-    Voter* curr = bst_search(v);
+     if(curr != nullptr){
+        if(!(curr->get_voted())){
+            curr->updateStrength(change);
+            percolate_up(curr);
+            //print message
 
-    delete v;
-
-    if(!(curr->get_voted())){
-        curr->updateStrength(change);
-        percolate_up(curr, ivector.size());
-        //print message
-
-        cout << "Support from ";
-        curr->name();
-        cout << " increase by " << change << " strength points.";
+            cout << "Support from ";
+            curr->name();
+            cout << " increase by " << change << " strength points." << endl;
+        } else {
+            //print message that it alr happened
+            curr->name();
+            cout << " has already voted." << endl;
+        }
     } else {
-        //print message that it alr happened
-        curr->name();
-        cout << " already voted";
+        cout << first << " " << last << " does not exist.";
     }
 };
 
@@ -143,45 +167,55 @@ void RegisterVoter::chauffeur(){
     Voter* voting;
 
     //LOOP THISSSS IF NOT VOTED
-    while(!chauffered){
-        voting = ivector[0];
-        chauffered = voting->get_voted();
+    if(ivector.size()>0){
+        while(!chauffered){
+            voting = ivector[0];
+            chauffered = !(voting->get_voted());
 
-        voting->vote();
+            voting->vote();
 
-        curr = ivector[ivector.size()-1];
-        curr->set_position(0);
-        ivector[0] = curr;
+            if(ivector.size()>1){
+                curr = ivector[ivector.size()-1];
+                curr->set_position(0);
+                ivector[0] = curr;
 
-        ivector.pop_back();
-        //pop off voted
+                ivector.pop_back();
+                //pop off voted
 
-        //percolate down()
-        percolate_down(curr, ivector.size());
+                //percolate down()
+                percolate_down(curr, ivector.size());
+            } else {
+                ivector.pop_back();
+                break;
+            }
+        }
     }
 
-
     //print voter
-    cout << "Driving ";
-    voting->show_full();
-    cout << endl;
+    if(chauffered){
+        cout << "Driving ";
+        voting->show_full();
+        cout << endl;
+    } else {
+        cout << "No one to drive." << endl;
+    }
+    
 };
 
 void RegisterVoter::show_impact(){
     //loop thru vector
-    for(int i=0;i<avector.size();i++){
+    for(long unsigned int i=0;i<avector.size();i++){
         avector[i]->show_full();
         cout << endl;
     }
 };
 
-bool RegisterVoter::swap_up(int current_index, int max){
+bool RegisterVoter::swap_up(int current_index){
     if(current_index > 0){
         Voter* child = ivector[current_index];
         Voter* parent = ivector[(current_index-1)/2];
         //if swapped and it has a child, return true if it has a child
-        //use max and index
-
+        //use max and index 
         if(parent->impactCompare(*child)){
             //if parent impact(Compare) child => parent < Child
             //change positions
@@ -246,7 +280,7 @@ bool RegisterVoter::swap_down(int current_index, int max){
 
 void RegisterVoter::percolate_down(Voter* curr, int max){
     bool valid = false;
-    int current_pos = 0;
+    int current_pos = curr->get_position();
 
     while(!valid){
         valid = swap_down(current_pos, max);
@@ -254,35 +288,40 @@ void RegisterVoter::percolate_down(Voter* curr, int max){
     }
 }
 
-void RegisterVoter::percolate_up(Voter* curr, int max){
+void RegisterVoter::percolate_up(Voter* curr){
     bool valid = false;
-    int current_pos = 0;
+    int current_pos = curr->get_position();
 
     while(!valid){
-        valid = swap_up(current_pos, max);
+        valid = swap_up(current_pos);
         current_pos = curr->get_position();
     }
 }
 
-Voter* RegisterVoter::bst_search(Voter* v){
+Voter* RegisterVoter::bst_search(string first, string last){
+    Voter* v = new Voter(first, last, 0);
     Voter* curr = root;
     while(curr != nullptr){
-        if(curr == v){
+        if(*curr == *v){
+            delete v;
             return curr;
         }
-        else if(v<curr){
+        else if(*v<*curr){
             if(curr->prev == nullptr){
+                delete v;
                 return nullptr;
             } else {
                 curr = curr->prev;
             }
         } else { // v>curr
             if(curr->next == nullptr){
+                delete v;
                 return nullptr;
             } else {
                 curr = curr->next;
             }
         }
     } 
+    delete v;
     return nullptr;
 }

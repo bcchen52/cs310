@@ -1,14 +1,17 @@
 {
-    "files.associations": {
-        "__threading_support": "cpp",
-        "bitset": "cpp",
-        "locale": "cpp",
-        "string": "cpp",
-        "iosfwd": "cpp",
-        "ios": "cpp",
-        "cmath": "cpp",
-        "__split_buffer": "cpp",
-        "vector": "cpp",
-        "iostream": "cpp"
-    }
+  "files.associations": {
+    "__threading_support": "cpp",
+    "bitset": "cpp",
+    "locale": "cpp",
+    "string": "cpp",
+    "iosfwd": "cpp",
+    "ios": "cpp",
+    "cmath": "cpp",
+    "__split_buffer": "cpp",
+    "vector": "cpp",
+    "iostream": "cpp"
+  },
+  "C_Cpp.intelliSenseCacheSize": 0,
+  "C_Cpp.intelliSenseMemoryLimit": 256,
+  "terminal.integrated.enablePersistentSessions": false
 }

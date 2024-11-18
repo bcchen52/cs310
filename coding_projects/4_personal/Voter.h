@@ -31,6 +31,7 @@ class Voter {
       bool operator!=(const Voter& other) const;
       bool operator<(const Voter& other) const;
       bool impactCompare(const Voter& other);
+      bool ageCompare(const Voter& other);
       void updateImpact();
       void updateStrength(double strength);
       void updateLikelihood(double likelihood);
