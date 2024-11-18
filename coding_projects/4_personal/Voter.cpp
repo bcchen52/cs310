@@ -77,8 +77,8 @@ bool Voter::operator<(const Voter& other) const {
 }
 
 bool Voter::impactCompare(const Voter& other)  {
-	if(likelihood * strength != other.likelihood*other.strength){
-		return likelihood * strength < other.likelihood*other.strength;
+	if(strength / likelihood != other.strength / other.likelihood){
+		return strength / likelihood < other.strength / other.likelihood;
 	} 
 	return *this < other;
 }
@@ -101,7 +101,7 @@ void Voter::updateStrength(double added_strength){
 }
       
 void Voter::updateLikelihood(double reduced_likelihood){
-	likelihood = likelihood * (100 - reduced_likelihood);
+	likelihood = likelihood * (1 - reduced_likelihood/100);
 	updateImpact();
 }
 

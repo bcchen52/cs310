@@ -123,7 +123,7 @@ void RegisterVoter::reduce_likelihood(string first, string last, double change){
     if(curr != nullptr){
         if(!(curr->get_voted())){
             curr->updateLikelihood(change);
-            percolate_down(curr, ivector.size());
+            percolate_up(curr);
             //print message
             cout << "Voting liklihood of ";
             curr->name();
