@@ -100,6 +100,8 @@ void RegisterVoter::voted(string first, string last, int age){
     Voter* curr = bst_search(first, last);
 
     if(curr != nullptr){
+        //assume always not voted
+        /*
         if(curr->get_voted()){
             cout << "Voter ";
             curr->show();
@@ -110,6 +112,23 @@ void RegisterVoter::voted(string first, string last, int age){
             curr->show();
             cout << " voted." << endl;
         }   
+        */
+
+        //remove from bst
+
+        //remove from array
+
+        Voter *swapped = ivector[ivector.size()-1];
+        ivector[curr->get_position()] = swapped;
+        swapped->set_position(curr->get_position());
+        ivector.pop_back();
+        percolate_down(swapped,ivector.size());
+
+        cout << "Voter ";
+        curr->show();
+        cout << " voted." << endl;
+
+        //delete curr
     } else {
         cout << first << " " << last << ", age " << age << " does not exist." << endl;
     }
@@ -134,7 +153,7 @@ void RegisterVoter::reduce_likelihood(string first, string last, double change){
             cout << "alread voted." << endl;
         }
     } else {
-        cout << first << " " << last << " does not exist.";
+        cout << first << " " << last << " does not exist or has already voted.";
     }
 };
 
@@ -142,31 +161,26 @@ void RegisterVoter::support(string first, string last, double change){
     //increase support increases likelhood, perolate up
     Voter* curr = bst_search(first, last);
 
-     if(curr != nullptr){
-        if(!(curr->get_voted())){
-            curr->updateStrength(change);
-            percolate_up(curr);
-            //print message
+     if(curr != nullptr){ 
+        curr->updateStrength(change);
+        percolate_up(curr);
+        //print message
 
-            cout << "Support from ";
-            curr->name();
-            cout << " increase by " << change << " strength points." << endl;
-        } else {
-            //print message that it alr happened
-            curr->name();
-            cout << " has already voted." << endl;
-        }
+        cout << "Support from ";
+        curr->name();
+        cout << " increase by " << change << " strength points." << endl;
     } else {
-        cout << first << " " << last << " does not exist.";
+        cout << first << " " << last << " does not exist or has already voted.";
     }
 };
 
 void RegisterVoter::chauffeur(){
-    bool chauffered = false;
+    bool chauffeured = false;
     Voter* curr;
     Voter* voting;
 
     //LOOP THISSSS IF NOT VOTED
+    /*
     if(ivector.size()>0){
         while(!chauffered){
             voting = ivector[0];
@@ -190,16 +204,40 @@ void RegisterVoter::chauffeur(){
             }
         }
     }
+    */
+
+    if(ivector.size()>0){
+        chauffeured = true;
+        voting = ivector[0];
+        if(ivector.size()>1){
+            curr = ivector[ivector.size()-1];
+            curr->set_position(0);
+            ivector[0] = curr;
+
+            ivector.pop_back();
+            //pop off voted
+
+            //percolate down()
+            percolate_down(curr, ivector.size());
+        } else {
+            ivector.pop_back();
+        }
+    }
+
+    //remove from array
+
+    //remove from bst
 
     //print voter
-    if(chauffered){
+    if(chauffeured){
         cout << "Driving ";
         voting->show_full();
         cout << endl;
     } else {
         cout << "No one to drive." << endl;
     }
-    
+
+    //delete voter
 };
 
 void RegisterVoter::show_impact(){

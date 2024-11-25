@@ -19,6 +19,8 @@ class Voter {
    public:
       Voter* next;
       Voter* prev;
+      Voter* left;
+      Voter* right;
       Voter(string firstname, string lastname, unsigned int voterage);
       Voter();
       Voter(const Voter& origObject);
